@@ -22,9 +22,9 @@ class ItemService
     public function saveTambahItem($data)
     {
         $validator = Validator::make($data,[
-            'nama_item' => 'required',
+            'name' => 'required',
             'desc' => 'required',
-            'harga' => 'required',
+            'price' => 'required',
             'stock' => 'required'
 
         ]);

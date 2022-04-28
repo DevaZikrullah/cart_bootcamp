@@ -30,24 +30,23 @@ class CartRepository
         
     }
 
-    public function getStok(string $id, string $namaBarang): ?int
+    public function getStok(string $name): ?int
     {
-        $query = DB::collection($namaBarang)
-        ->where('nama_barang', $namaBarang)
+        $query = DB::collection($name)
+        ->where('nama_barang', $name)
         ->value('stock');
         return $query;
     }
     
     public function addItem()
     {
-        $item = new $this->item;
 
-        Cart::add($item[array(
-            'id' => $this->id, 
-            'nama_barang' => $this->nama_barang,
+        Cart::add([array(
+            '_id' => $this->_id, 
+            'name' => $this->name,
             'desc' =>$this->desc,
-            'stock' => $this->stock,
-            'harga' => $this->harga
+            'quantity' => $this->quantity,
+            'price' => $this->price
         )]);
     }
 }

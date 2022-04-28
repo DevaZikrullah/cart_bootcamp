@@ -15,6 +15,10 @@ class CartService
         $this->cartRepository = $cartRepository;
     }
 
-    
+    public function add()
+    {
+        
+        return $this->cartRepository->addItem();
+    }
    
 }

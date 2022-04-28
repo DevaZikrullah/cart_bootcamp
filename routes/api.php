@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +29,8 @@ Route::post('/item', [
 
 Route::get('/item', [
     ItemController::class, 'getAll'
+]);
+
+Route::post('/item', [
+    CartController::class, 'addToCart'
 ]);

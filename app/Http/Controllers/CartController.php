@@ -3,10 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Services\CartService;
+use Exception;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -35,17 +44,27 @@ class CartController extends Controller
      */
     public function addToCart(Request $request,$data)
     {
-        Cart::add($data,[
-            'nama_barang' => $request->nama_barang,
-            'stock_beli' => $request->stock_beli,
-            'total_harga' => $request->total_harga,
-        ]);
-        $result = [
-            'status' => 200,
-            'message' =>'success'
-        ];
+        $data = $request->only([
+            'name',
+            'desc',
+            'price',
+            'stock',
 
-        return response()->json($data,$result);
+        ]);
+
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->cartService->add($data);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($data, $result['status']);
+
     }
 
     /**
