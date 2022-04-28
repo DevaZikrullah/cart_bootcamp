@@ -5416,8 +5416,8 @@ __webpack_require__.r(__webpack_exports__);
     addToCart: function addToCart() {
       this.$store.dispatch('addProductToCart', {
         id: this.productItem.id,
-        nama_item: this.productItem.nama_item,
-        harga: this.productItem.harga,
+        name: this.productItem.name,
+        price: this.productItem.price,
         quantity: 1
       });
     }
@@ -29039,11 +29039,9 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", [
-    _c("th", { attrs: { scope: "row" } }, [
-      _vm._v(_vm._s(_vm.cartItem.nama_item)),
-    ]),
+    _c("th", { attrs: { scope: "row" } }, [_vm._v(_vm._s(_vm.cartItem.name))]),
     _vm._v(" "),
-    _c("td", [_vm._v("Rp. " + _vm._s(_vm.cartItem.harga))]),
+    _c("td", [_vm._v("Rp. " + _vm._s(_vm.cartItem.price))]),
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.cartItem.quantity))]),
     _vm._v(" "),
@@ -29215,7 +29213,7 @@ var render = function () {
   return _c("div", { staticClass: "card", staticStyle: { width: "18rem" } }, [
     _c("div", { staticClass: "card-body" }, [
       _c("h5", { staticClass: "card-title" }, [
-        _vm._v(_vm._s(_vm.productItem.nama_item)),
+        _vm._v(_vm._s(_vm.productItem.name)),
       ]),
       _vm._v(" "),
       _c("p", { staticClass: "card-text" }, [
@@ -29227,7 +29225,7 @@ var render = function () {
       ]),
       _vm._v(" "),
       _c("a", { staticClass: "btn btn-light" }, [
-        _vm._v("Rp. " + _vm._s(_vm.productItem.harga)),
+        _vm._v("Rp. " + _vm._s(_vm.productItem.price)),
       ]),
       _vm._v(" "),
       _c(
