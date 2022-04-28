@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import CartListItem from './Cart_Item.vue'
 export default {
   name: "CartList",
@@ -37,6 +37,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-
-</style>

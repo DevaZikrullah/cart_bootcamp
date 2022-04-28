@@ -72,13 +72,12 @@ export default new Vuex.Store({
   },
   actions: {
     getCartItems ({ commit }) {
-        axios.get('api/getItem').then((response) => {
+        axios.get('api/item').then((response) => {
           commit('UPDATE_CART_ITEMS', response.data.data)
         });
     },
 
     async addCartItem(context, data) {
-        //Mengurangi stock produk
         axios.put('http://localhost:8000api/item' + data._id, {
             stock: data.stock - 1,
             name: data.name,
