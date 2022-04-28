@@ -31,6 +31,10 @@ Route::get('/item', [
     ItemController::class, 'getAll'
 ]);
 
+Route::get('/cart', [
+    CartController::class, 'getAll'
+]);
+
 Route::post('/item', [
     CartController::class, 'addToCart'
 ]);

@@ -8,26 +8,19 @@ use Illuminate\Support\Facades\DB;
 class CartRepository 
 {
     protected $cart;
-    protected $item;
+    
 
 
-    public function __construct(Cart $cart,Item $item)
+    public function __construct(Cart $cart)
     {
         $this->cart = $cart;
-        $this->item = $item;
     }
 
 
-    public function save ($data)
+    public function getAll() : Object
     {
-        $cart = new $this->cart;
-
-        $cart->desc = $data['stock_beli'];
-        $cart->harga = $data['total_harga'];
-        $cart->save();
-
-        return $cart->fresh();
-        
+        $cart = $this->cart->get();
+        return $cart;
     }
 
     public function getStok(string $name): ?int

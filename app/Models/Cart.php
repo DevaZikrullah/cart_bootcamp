@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Jenssegers\Mongodb\Eloquent\Model;
 
-class Cart extends Eloquent
+class Cart extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nama_item',
-        'stock_beli',
-        'total_harga'
+        'name',
+        'quantity',
+        'price'
     ];
 }

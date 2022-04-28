@@ -23,7 +23,18 @@ class CartController extends Controller
      */
     public function getAll()
     {
-        
+        $result = ['status' => 200];
+
+        try {
+            $result['data'] = $this->cartService->getCartAll();
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result, $result['status']);
     }
 
     /**
