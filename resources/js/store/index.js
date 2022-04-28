@@ -26,6 +26,25 @@ export default new Vuex.Store({
         state.cartItems = payload;
     },
 
+    ADD_TO_CART(state,{id,name,price,quantity}){
+        state.totalPrice += price;
+        state.cartTotal += quantity;
+        let findProduct = state.productItems.find(o => o.name === name)
+        
+        findProduct.stock -= quantity;
+        let findCart = state.cartItems.find(o => o.name === name)
+        if(findCart){
+            findCart.quantity +=1;
+        }else{
+            state.cartItems.push({
+                id,
+                name,
+                price,
+                quantity
+            })
+        }
+    },
+
     UPDATE_PRODUCT_BY_ID(state, payload) {
         state.products = state.products.map(product => {
             if (product._id === payload._id) {
@@ -77,8 +96,16 @@ export default new Vuex.Store({
         });
     },
 
+    ADD_CART_ITEM(state, payload) {
+        state.checkoutItems.push(payload);
+    },
+
+    UPDATE_CHECKOUT(state) {
+        state.totalCheckout += 1;
+    },
+
     async addCartItem(context, data) {
-        axios.put('http://localhost:8000api/item' + data._id, {
+        axios.put('http://localhost:8000/api/item' + data._id, {
             stock: data.stock - 1,
             name: data.name,
             desc: data.desc,
@@ -94,13 +121,11 @@ export default new Vuex.Store({
 
         // Menambahkan atau mengupdate data di cart
         let test;
-        await axios.get('http://localhost:8000/data/cart/product/' + data._id)
+        await axios.get('http://localhost:8000/api/cart' + data._id)
             .then(res => {
                 test = {
-                    "_id": res.data[0]._id,
                     "name": res.data[0].name,
                     "quantity": res.data[0].quantity,
-                    "desc": res.data[0].description,
                     "price": res.data[0].price,
                 };
             })
@@ -108,12 +133,11 @@ export default new Vuex.Store({
 
         if (test) {
             const newQuantity = test.quantity + 1;
-            axios.put('http://localhost:8000/data/cart/' + test._id, {
+            axios.put('http://localhost:8000/api/cart' + test._id, {
                 quantity: newQuantity,
                 name: test.name,
                 price: data.price * newQuantity,
-                description: test.description,
-                product_id: test.product_id
+                desc: test.desc,
             })
                 .then(response => {
                     context.commit('UPDATE_CHECKOUT_BY_ID', response.data);
@@ -122,11 +146,10 @@ export default new Vuex.Store({
                     console.log(error.response.data);
                 });
         } else {
-            axios.post('http://localhost:8000/data/cart/', {
+            axios.post('http://localhost:8000/cart/', {
                 name: data.name,
                 quantity: 1,
                 price: data.price,
-                product_id: data._id
             })
                 .then(res => {
                     context.commit('ADD_CART_ITEM', res.data);

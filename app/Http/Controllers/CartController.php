@@ -53,13 +53,13 @@ class CartController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function addToCart(Request $request,$data)
+    public function addToCart(Request $request)
     {
         $data = $request->only([
             'name',
-            'desc',
+            'quantity',
             'price',
-            'stock',
+            
 
         ]);
 

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class CartRepository 
 {
-    protected $cart;
+    protected Cart $cart;
     
 
 
@@ -31,15 +31,13 @@ class CartRepository
         return $query;
     }
     
-    public function addItem()
+    public function addItem($cart)
     {
 
-        Cart::add([array(
-            '_id' => $this->_id, 
-            'name' => $this->name,
-            'desc' =>$this->desc,
-            'quantity' => $this->quantity,
-            'price' => $this->price
-        )]);
+        $newData = new $this->cart;
+        $newData->name = $cart['name'];
+        $newData->price = $cart['price'];
+        $newData->quantity = 1;
+        $newData->save();
     }
 }

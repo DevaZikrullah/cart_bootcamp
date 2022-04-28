@@ -5650,6 +5650,32 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
     UPDATE_CART_ITEMS: function UPDATE_CART_ITEMS(state, payload) {
       state.cartItems = payload;
     },
+    ADD_TO_CART: function ADD_TO_CART(state, _ref) {
+      var id = _ref.id,
+          name = _ref.name,
+          price = _ref.price,
+          quantity = _ref.quantity;
+      state.totalPrice += price;
+      state.cartTotal += quantity;
+      var findProduct = state.productItems.find(function (o) {
+        return o.name === name;
+      });
+      findProduct.stock -= quantity;
+      var findCart = state.cartItems.find(function (o) {
+        return o.name === name;
+      });
+
+      if (findCart) {
+        findCart.quantity += 1;
+      } else {
+        state.cartItems.push({
+          id: id,
+          name: name,
+          price: price,
+          quantity: quantity
+        });
+      }
+    },
     UPDATE_PRODUCT_BY_ID: function UPDATE_PRODUCT_BY_ID(state, payload) {
       state.products = state.products.map(function (product) {
         if (product._id === payload._id) {
@@ -5671,10 +5697,10 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
     UPDATE_PRODUCT_ITEMS: function UPDATE_PRODUCT_ITEMS(state, payload) {
       state.productItems = payload;
     },
-    DELETE_ITEM_CART: function DELETE_ITEM_CART(state, _ref) {
-      var id = _ref.id,
-          quantity = _ref.quantity,
-          price = _ref.price;
+    DELETE_ITEM_CART: function DELETE_ITEM_CART(state, _ref2) {
+      var id = _ref2.id,
+          quantity = _ref2.quantity,
+          price = _ref2.price;
       var totalHarga = state.totalPrice += price;
       var findProduct = state.productItems.find(function (o) {
         return o.id === id;
@@ -5697,11 +5723,17 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
     }
   },
   actions: {
-    getCartItems: function getCartItems(_ref2) {
-      var commit = _ref2.commit;
+    getCartItems: function getCartItems(_ref3) {
+      var commit = _ref3.commit;
       axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/item').then(function (response) {
         commit('UPDATE_CART_ITEMS', response.data.data);
       });
+    },
+    ADD_CART_ITEM: function ADD_CART_ITEM(state, payload) {
+      state.checkoutItems.push(payload);
+    },
+    UPDATE_CHECKOUT: function UPDATE_CHECKOUT(state) {
+      state.totalCheckout += 1;
     },
     addCartItem: function addCartItem(context, data) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -5710,7 +5742,7 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                axios__WEBPACK_IMPORTED_MODULE_1___default().put('http://localhost:8000api/item' + data._id, {
+                axios__WEBPACK_IMPORTED_MODULE_1___default().put('http://localhost:8000/api/item' + data._id, {
                   stock: data.stock - 1,
                   name: data.name,
                   desc: data.desc,
@@ -5723,12 +5755,10 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
                 }); // Menambahkan atau mengupdate data di cart
 
                 _context.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('http://localhost:8000/data/cart/product/' + data._id).then(function (res) {
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('http://localhost:8000/api/cart' + data._id).then(function (res) {
                   test = {
-                    "_id": res.data[0]._id,
                     "name": res.data[0].name,
                     "quantity": res.data[0].quantity,
-                    "desc": res.data[0].description,
                     "price": res.data[0].price
                   };
                 })["catch"](function (err) {
@@ -5738,23 +5768,21 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
               case 3:
                 if (test) {
                   newQuantity = test.quantity + 1;
-                  axios__WEBPACK_IMPORTED_MODULE_1___default().put('http://localhost:8000/data/cart/' + test._id, {
+                  axios__WEBPACK_IMPORTED_MODULE_1___default().put('http://localhost:8000/api/cart' + test._id, {
                     quantity: newQuantity,
                     name: test.name,
                     price: data.price * newQuantity,
-                    description: test.description,
-                    product_id: test.product_id
+                    desc: test.desc
                   }).then(function (response) {
                     context.commit('UPDATE_CHECKOUT_BY_ID', response.data);
                   })["catch"](function (error) {
                     console.log(error.response.data);
                   });
                 } else {
-                  axios__WEBPACK_IMPORTED_MODULE_1___default().post('http://localhost:8000/data/cart/', {
+                  axios__WEBPACK_IMPORTED_MODULE_1___default().post('http://localhost:8000/cart/', {
                     name: data.name,
                     quantity: 1,
-                    price: data.price,
-                    product_id: data._id
+                    price: data.price
                   }).then(function (res) {
                     context.commit('ADD_CART_ITEM', res.data);
                   })["catch"](function (error) {
@@ -5770,12 +5798,12 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
         }, _callee);
       }))();
     },
-    addProductToCart: function addProductToCart(_ref3, _ref4) {
-      var commit = _ref3.commit;
-      var id = _ref4.id,
-          name = _ref4.name,
-          price = _ref4.price,
-          quantity = _ref4.quantity;
+    addProductToCart: function addProductToCart(_ref4, _ref5) {
+      var commit = _ref4.commit;
+      var id = _ref5.id,
+          name = _ref5.name,
+          price = _ref5.price,
+          quantity = _ref5.quantity;
       commit('ADD_TO_CART', {
         id: id,
         name: name,
@@ -5783,17 +5811,17 @@ vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3_
         quantity: quantity
       });
     },
-    getProductItems: function getProductItems(_ref5) {
-      var commit = _ref5.commit;
+    getProductItems: function getProductItems(_ref6) {
+      var commit = _ref6.commit;
       axios__WEBPACK_IMPORTED_MODULE_1___default().get("api/item").then(function (response) {
         commit('UPDATE_PRODUCT_ITEMS', response.data.data);
       });
     },
-    deleteItemFromCart: function deleteItemFromCart(_ref6, _ref7) {
-      var commit = _ref6.commit;
-      var id = _ref7.id,
-          quantity = _ref7.quantity,
-          price = _ref7.price;
+    deleteItemFromCart: function deleteItemFromCart(_ref7, _ref8) {
+      var commit = _ref7.commit;
+      var id = _ref8.id,
+          quantity = _ref8.quantity,
+          price = _ref8.price;
       commit('DELETE_ITEM_CART', {
         id: id,
         quantity: quantity
